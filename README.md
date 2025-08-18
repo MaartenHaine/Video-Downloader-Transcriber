@@ -195,7 +195,7 @@ transcripter-video/
 
 ## License
 
-This project is provided as-is for educational and personal use. Please ensure compliance with your institution's policies regarding video downloads and transcription.
+This project is provided as-is for educational and personal use.
 
 ## Changelog
 
