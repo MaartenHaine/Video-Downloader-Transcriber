@@ -7,6 +7,7 @@ Handles command-line arguments and coordinates between downloader and transcribe
 import argparse
 import sys
 import os
+import subprocess
 from pathlib import Path
 
 # Add current directory to path for imports
@@ -19,8 +20,12 @@ def check_dependencies():
         'selenium',
         'yt_dlp',
         'whisper',
-        'webdriver_manager'
+        'webdriver_manager',
+        'faster_whisper',
+        'watchdog',
+        'tqdm'
     ]
+
 
     missing_packages = []
     for package in required_packages:
@@ -28,6 +33,16 @@ def check_dependencies():
             __import__(package)
         except ImportError:
             missing_packages.append(package)
+
+    # Check FFmpeg
+    try:
+        subprocess.run(['ffmpeg', '-version'],
+                       stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL,
+                       check=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("[WARNING] FFmpeg not found - required for enhanced video transcription")
+        print("Install from: https://ffmpeg.org/download.html")
 
     if missing_packages:
         print(f"Missing required packages: {', '.join(missing_packages)}")

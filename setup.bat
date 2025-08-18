@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM Video Transcriber Setup Script for Windows
-REM Provides user-friendly setup and operation selection
+REM Only handles installation and setup
 
 echo ==========================================
 echo     Video Transcriber Setup Script
@@ -34,6 +34,20 @@ if %errorlevel% neq 0 (
 )
 echo [INFO] Python version is compatible
 
+REM Check if FFmpeg is installed
+echo [STEP] Checking FFmpeg installation...
+ffmpeg -version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [WARNING] FFmpeg not found!
+    echo [INFO] FFmpeg is required for enhanced video transcription
+    echo [INFO] Please install from: https://ffmpeg.org/download.html
+    echo [INFO] Or use chocolatey: choco install ffmpeg
+    echo [INFO] Make sure FFmpeg is added to your PATH
+    pause
+) else (
+    echo [INFO] FFmpeg found
+)
+
 REM Check if Chrome is installed
 echo [STEP] Checking Chrome browser...
 if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
@@ -42,6 +56,15 @@ if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
     echo [INFO] Chrome found
 ) else (
     echo [WARNING] Chrome not found. Please install from https://chrome.google.com
+)
+
+REM Check for NVIDIA GPU (optional)
+echo [STEP] Checking for NVIDIA GPU...
+nvidia-smi >nul 2>&1
+if %errorlevel% equ 0 (
+    echo [INFO] NVIDIA GPU detected - GPU acceleration will be available
+) else (
+    echo [INFO] No NVIDIA GPU detected - will use CPU mode
 )
 
 REM Create directory structure
@@ -67,64 +90,25 @@ call venv\Scripts\activate
 REM Upgrade pip
 python -m pip install --upgrade pip
 
-REM Install dependencies
+REM Install PyTorch with CUDA support first
+echo [INFO] Installing PyTorch with CUDA support...
+pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+REM Install other dependencies
 if exist "requirements.txt" (
     pip install -r requirements.txt
 ) else (
     echo [INFO] Installing core dependencies...
-    pip install selenium yt-dlp openai-whisper webdriver-manager
+    pip install selenium yt-dlp openai-whisper faster-whisper webdriver-manager watchdog tqdm librosa soundfile
 )
-echo [INFO] Dependencies installed successfully
 
+REM Test CUDA setup
+echo [STEP] Testing GPU setup...
+python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'GPU name: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"N/A\"}')"
+
+echo [INFO] Dependencies installed successfully
 echo.
 echo [INFO] Setup completed successfully!
+echo [INFO] Use run.bat to start the application
 echo.
-
-REM Main menu loop
-:menu
-echo ==========================================
-echo         Choose Your Operation
-echo ==========================================
-echo.
-echo 1. Download Videos Only
-echo    - Capture videos from web platforms
-echo    - Save to downloads\ folder
-echo.
-echo 2. Transcribe Videos Only
-echo    - Convert existing videos to text
-echo    - Process files from downloads\ folder
-echo.
-echo 3. Download and Transcribe
-echo    - Complete workflow
-echo    - Download then automatically transcribe
-echo.
-echo 4. Exit
-echo.
-set /p choice=Enter your choice (1-4):
-
-REM Activate virtual environment for operations
-call venv\Scripts\activate
-
-if "%choice%"=="1" (
-    echo [INFO] Starting Video Downloader...
-    python main.py --mode download
-    goto end
-) else if "%choice%"=="2" (
-    echo [INFO] Starting Video Transcriber...
-    python main.py --mode transcribe
-    goto end
-) else if "%choice%"=="3" (
-    echo [INFO] Starting Download and Transcribe workflow...
-    python main.py --mode both
-    goto end
-) else if "%choice%"=="4" (
-    echo [INFO] Exiting...
-    goto end
-) else (
-    echo [ERROR] Invalid choice. Please select 1-4.
-    echo.
-    goto menu
-)
-
-:end
 pause

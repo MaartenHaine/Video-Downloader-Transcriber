@@ -1,4 +1,12 @@
+# Core dependencies
 selenium>=4.15.0
 yt-dlp>=2023.10.13
-openai-whisper>=20231117
 webdriver-manager>=4.0.1
+
+# Enhanced transcription
+faster-whisper>=0.9.0
+openai-whisper>=20231117
+
+# Progress and file monitoring
+tqdm>=4.66.0
+watchdog>=3.0.0
