@@ -52,9 +52,9 @@ This setup only needs to be done once. When the setup has been done before on th
 - Open Terminal in the project folder
 - Run: `./run.sh` (`chmod +x run.sh`)
 
-### Step 3: Choose Your Operation
+### Step 4: Choose Your Operation
 
-The setup script will present three options:
+The run script will present three options:
 1. **Download Videos Only** - Capture videos from web platforms
 2. **Transcribe Videos Only** - Convert existing videos to text
 3. **Download and Transcribe** - Complete workflow from capture to text
