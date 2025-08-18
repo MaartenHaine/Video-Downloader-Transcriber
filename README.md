@@ -40,7 +40,7 @@ This project provides two main functionalities:
 
 **macOS/Linux:**
 - Open Terminal in the project folder
-- Run: `./setup.sh`
+- Run: `./setup.sh` (`chmod +x setup.sh`)
 
 ### Step 3: Choose Your Operation
 
