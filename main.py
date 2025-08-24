@@ -104,10 +104,10 @@ def main():
         description="Video Transcriber - Download and transcribe videos",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  python main.py --mode download     # Download videos only
-  python main.py --mode transcribe   # Transcribe existing videos
-  python main.py --mode both         # Download then transcribe
+        Examples:
+          python main.py --mode download     # Download videos only
+          python main.py --mode transcribe   # Transcribe existing videos
+          python main.py --mode both         # Download then transcribe
         """
     )
 
